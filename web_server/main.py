@@ -31,6 +31,7 @@ except:
 rtc = RTC()
 rtc.datetime(utime.localtime(seconds))
 
+
 def time():
     body = """<html>
 <body>
@@ -42,17 +43,51 @@ def time():
 
     return response_template % body
 
+
+pin_out = machine.Pin(9, machine.Pin.OUT)
+pin_in = machine.Pin(10, machine.Pin.IN)
+adc = machine.ADC(0)
+
+
+def light():
+    body = "{value: " + adc.read() + "}"
+    return response_template % body
+
+
+def switch():
+    body = "Switch Value: {}".format(pin_in.value())
+    return response_template % body
+
+
+def light_on():
+    pin_out.value(1)
+    body = "You've turned a light on!"
+
+    return response_template % body
+
+
+def light_off():
+    pin_out.value(0)
+    body = "You've turned a light off!"
+
+    return response_template % body
+
+
 def dummy():
     body = "This is a dummy endpoint"
 
     return response_template % body
 
-pin = machine.Pin(10, machine.Pin.IN)
 
 handlers = {
     'time': time,
     'dummy': dummy,
+    'light_on': light_on,
+    'light_off': light_off,
+    'switch': switch,
+    'light': light,
 }
+
 
 def main():
     s = socket.socket()
